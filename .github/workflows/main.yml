@@ -19,13 +19,10 @@ jobs:
           node-version: '16'  # Specify your Node.js version
 
       - name: Install linthtml
-        run: npm install @linthtml/linthtml --save-dev
-
-      - name: Setup linthtml
-        run: npx linthtml --init
+        run: npm install htmlhint -g
 
       - name: Linthtml
         run: | 
-               npx linthtml '*.html'
-               npx linthtml 'Archie/*.html'
-               npx linthtml 'Max/*html'
+               htmlhint '*.html'
+               htmlhint 'Archie/*.html'
+               htmlhint 'Max/*html'
