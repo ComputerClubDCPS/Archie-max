@@ -18,39 +18,14 @@ jobs:
         with:
           node-version: '16'  # Specify your Node.js version
 
-      - name: Install htmlhint
-        run: npm install -g htmlhint
+      - name: Install linthtml
+        run: npm install @linthtml/linthtml --save-dev
 
-      - name: Lint HTML files
-        id: lint
-        run: |
-          LINT_OUTPUT=$(htmlhint '**/*.html') || true
-          if [ -n "$LINT_OUTPUT" ]; then
-            echo "HTML Linting failed with the following issues:"
-            echo "$LINT_OUTPUT"
-            echo "::set-output name=lint_result::$LINT_OUTPUT"
-            exit 1
-          else
-            echo "HTML Linting passed!"
-            echo "::set-output name=lint_result::No issues found"
-          fi
+      - name: Setup linthtml
+        run: npx linthtml --init
 
-      - name: Comment on Pull Request if Linting Failed
-        if: failure()
-        uses: peter-evans/[comment](https://github.com/peter-evans/comment)
-        with:
-          issue-number: ${{ github.event.pull_request.number }}
-          body: |
-            ### HTML Linting Failed
-            The HTML files have the following lint issues:
-            ```
-            ${{ steps.lint.outputs.lint_result }}
-            ```
-
-      - name: Merge Pull Request if Linting Succeeded
-        if: success()
-        uses: "peter-evans/merge-pull-request@v4"
-        with:
-          pull-request-number: ${{ github.event.pull_request.number }}
-          merge-method: squash  # You can use 'merge', 'squash', or 'rebase'
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Linthtml
+        run: | 
+               npx linthtml '*.html'
+               npx linthtml 'Archie/*.html'
+               npx linthtml 'Max/*html'
